@@ -14,21 +14,17 @@ export class DatabaseService {
   constructor(private envService: EnvService) {}
 
   async createConnection(): Promise<void> {
-    try {
-      this._connection = await createConnection({
-        type: this.envService.DB_DIALECT as any,
-        host: this.envService.DB_HOST,
-        port: this.envService.DB_PORT,
-        username: this.envService.DB_USER,
-        password: this.envService.HTTP_DB_PASSWORD,
-        database: this.envService.DB_USED_DATABASE,
-        synchronize: true,
-        entities: [User, Kanban, KanbanStatus, Task, UserKanban],
-        namingStrategy: new SnakeNamingStrategy(),
-      });
-    } catch (error) {
-      console.log('connect error', error);
-    }
+    this._connection = await createConnection({
+      type: this.envService.DB_DIALECT as any,
+      host: this.envService.DB_HOST,
+      port: this.envService.DB_PORT,
+      username: this.envService.DB_USER,
+      password: this.envService.HTTP_DB_PASSWORD,
+      database: this.envService.DB_USED_DATABASE,
+      synchronize: true,
+      entities: [User, Kanban, KanbanStatus, Task, UserKanban],
+      namingStrategy: new SnakeNamingStrategy(),
+    });
   }
 
   get connection() {
@@ -36,11 +32,7 @@ export class DatabaseService {
   }
 
   getRepository<T extends BaseEntity>(type: new () => T): Repository<T> {
-    try {
-      return this.connection.getRepository(type);
-    } catch (error) {
-      console.log('has some error', error);
-    }
+    return this.connection.getRepository(type);
   }
 
   async closeConnection() {
